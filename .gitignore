@@ -10,6 +10,7 @@ MQI/
 RVInvestigator/
 Reef2Rain/
 TAN1802/
+__pycache__
 station_track-BLN.ipynb
 station_track.ipynb
 vessel_track-BLN.ipynb
