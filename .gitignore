@@ -3,17 +3,11 @@ AuroraAustralis/
 CGO/
 Capricorn/
 ColdWaterTrial/
-Data Wrangling.ipynb
-Evaluation.ipynb
 Ice2Equator/
 MQI/
 RVInvestigator/
 Reef2Rain/
 TAN1802/
-__pycache__
-station_track-BLN.ipynb
-station_track.ipynb
-vessel_track-BLN.ipynb
-vessel_track.ipynb
+__pycache__/
 token.txt
 /figures
