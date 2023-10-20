@@ -60,8 +60,11 @@ def df_md(key, m_path, mod, dt):
     """
         
     for t in key.index: #loop to pull out model data on ship track
-        m_df = m_path+mod+'.'+dt+'{}{:02d}{:02d}.nc'.format(t.year,t.month,t.day)
-        df = xr.open_mfdataset(m_df)
+        try:
+            m_df = m_path+mod+'.'+dt+'{}{:02d}{:02d}.nc'.format(t.year,t.month,t.day)
+            df = xr.open_mfdataset(m_df)
+        except:
+            pass
         shplat = key['lat'].loc[t]
         shplon = key['lon'].loc[t]
         data = df.interp(lat=shplat, lon=shplon, lat_v=shplat, lon_u=shplon)

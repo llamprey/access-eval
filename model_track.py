@@ -24,21 +24,21 @@ variables = ['lat','lon','N3','N10','CCN40','CCN50','CCN60','uas','vas','psl','p
 print("Selected variables: ",variables)
 
 # Select and print model runs
-runs = ['bx400', 'cg283'] # add or remove model runs here
+runs = ['ch543', 'cq686','cq687'] # add or remove model runs here
 print("Selected run: ",runs)
 
 # set which campaigns to track (TRUE or FALSE)
-run_rvi = False
-run_cwt = False
-run_r2r = False
-run_i2e = False
-run_cap1 = False
-run_cap2 = False
-run_marcus = False
-run_cammpcan = False
+run_rvi = True
+run_cwt = True
+run_r2r = True
+run_i2e = True
+run_cap1 = True
+run_cap2 = True
+run_marcus = True
+run_cammpcan = True
 run_tan1802 = True
-run_mqi = False
-run_cgo = False
+run_mqi = True
+run_cgo = True
 
 # define pipeline
 def pipeline(key, run):
@@ -98,6 +98,9 @@ def pipeline(key, run):
     name = '{}_{}_track.nc'.format(v_name, run)
     track.load().to_netcdf(path=out_path+name)
     print("COMPLETED: {} {}".format(v_name, run))
+
+    # close the file to free up memory
+    track.close()
 
 print("PIPELINE LOADED")
 
