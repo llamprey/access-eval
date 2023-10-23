@@ -24,21 +24,23 @@ variables = ['lat','lon','N3','N10','CCN40','CCN50','CCN60','uas','vas','psl','p
 print("Selected variables: ",variables)
 
 # Select and print model runs
-runs = ['ch543', 'cq686','cq687'] # add or remove model runs here
+runs = ['bx400', 'cg283', 'ch543', 'cq686','cq687'] # add or remove model runs here
 print("Selected run: ",runs)
 
 # set which campaigns to track (TRUE or FALSE)
-run_rvi = True
-run_cwt = True
-run_r2r = True
+run_rvi = False
+run_cwt = False
+run_r2r = False
 run_i2e = True
-run_cap1 = True
-run_cap2 = True
-run_marcus = True
-run_cammpcan = True
-run_tan1802 = True
-run_mqi = True
-run_cgo = True
+run_cap1 = False
+run_cap2 = False
+run_pcan = False
+run_marcus = False
+run_cammpcan = False
+run_tan1802 = False
+run_mqi = False
+run_cgo = False
+run_syw = False
 
 # define pipeline
 def pipeline(key, run):
@@ -139,7 +141,8 @@ if run_r2r == True:
 if run_i2e == True:
     print("TRACKING: Ice 2 Equator")
     v_name = 'i2e16'
-    uw = keycutter(in_path+'I2E_ProcessedAerosolData_1min.csv', 'date', 'lat', 'lon')
+    uw = keycutter(in_path+'aerosol - Ice2Equator - daily means from hrly data.csv', 'date', 'lat', 'lon')
+    uw['lon'] = uw.lon % 360
     uw = uw.dropna()
     
     for run in runs:
@@ -171,6 +174,20 @@ if run_cap2 == True:
     
     for run in runs:
         pipeline(uw, run)
+
+# PCAN
+if run_pcan == True:
+    print("TRACKING: PCAN")
+    v_name = 'pcan17'
+    uw = pd.read_csv(in_path+'aerosol - PCAN - daily means from hrly data.csv', index_col=0)
+    uw.index.names = ['time']
+    uw['time'] = pd.DatetimeIndex(uw.index)
+    uw.index = uw['time'].astype('datetime64[ns]')
+    uw = uw[['lat','lon']]
+
+    for run in runs:
+        pipeline(uw, run)
+
 
 # MARCUS
 if run_marcus == True:
@@ -236,5 +253,22 @@ if run_cgo == True:
 
     for run in runs:
         pipeline(uw, run)
+
+# Syowa
+if run_syw == True:
+    print("TRACKING: SYOWA")
+    v_name = 'syw1618'
+    uw = pd.read_csv(in_path+'aerosol - Syowa - daily means from hrly data.csv', index_col='Date time UT')
+    uw.index.names = ['time']
+    uw['time'] = pd.DatetimeIndex(uw.index)
+    uw.index = uw['time'].astype('datetime64[ns]')
+    uw = uw.loc['2016']
+    uw['lat'] = -69.00
+    uw['lon'] = 39.59
+    uw = uw[['lat','lon']]
+
+    for run in runs:
+        pipeline(uw, run)
+    
 
 print("DONE")

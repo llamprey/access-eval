@@ -1,3 +1,4 @@
+import os
 import matplotlib 
 import matplotlib.pyplot as plt 
 import pandas as pd
@@ -58,25 +59,33 @@ def df_md(key, m_path, mod, dt):
     
     Returns a data array containing model data set by 'dt'.
     """
+
+    dftrack = None  # Initialize dftrack
         
-    for t in key.index: #loop to pull out model data on ship track
-        try:
-            m_df = m_path+mod+'.'+dt+'{}{:02d}{:02d}.nc'.format(t.year,t.month,t.day)
-            df = xr.open_mfdataset(m_df)
-        except:
-            pass
-        shplat = key['lat'].loc[t]
-        shplon = key['lon'].loc[t]
-        data = df.interp(lat=shplat, lon=shplon, lat_v=shplat, lon_u=shplon)
-        data = data.reset_coords(('lat','lon','lat_v','lon_u'))
-        data['lat'] = data.lat.expand_dims(dim='time')
-        data['lon'] = data.lon.expand_dims(dim='time')
-        data['lat_v'] = data.lat_v.expand_dims(dim='time')
-        data['lon_u'] = data.lon_u.expand_dims(dim='time')        
-        if t == key.index[0]:
-            dftrack = data
-        else:
-            dftrack = xr.concat([data, dftrack], dim='time')
+    for t in key.index: # loop to pull out model data on ship track
+        m_df = m_path + mod + '.' + dt + '{}{:02d}{:02d}.nc'.format(t.year, t.month, t.day)
+        
+        if os.path.exists(m_df):
+            try:
+                df = xr.open_mfdataset(m_df)
+                shplat = key['lat'].loc[t]
+                shplon = key['lon'].loc[t]
+                data = df.interp(lat=shplat, lon=shplon, lat_v=shplat, lon_u=shplon)
+                data = data.reset_coords(('lat', 'lon', 'lat_v', 'lon_u'))
+                data['lat'] = data.lat.expand_dims(dim='time')
+                data['lon'] = data.lon.expand_dims(dim='time')
+                data['lat_v'] = data.lat_v.expand_dims(dim='time')
+                data['lon_u'] = data.lon_u.expand_dims(dim='time')        
+
+                if dftrack is None:
+                    dftrack = data
+                else:
+                    dftrack = xr.concat([data, dftrack], dim='time')
+
+            except Exception as e:
+                print(f"Error for time {t}: {str(e)}")
+                # You can log the error or take other appropriate actions here
+
     return dftrack
 
 
